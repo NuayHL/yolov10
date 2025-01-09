@@ -74,7 +74,7 @@ class BboxLoss(nn.Module):
         self.using_ciou = True if self.which_iou == 'CIoU' else False
         self.using_diou = True if self.which_iou == 'DIoU' else False
         self.using_interpiou = True if self.which_iou == 'InterpIoU' else False
-        if self.which_iou == 'InterpIoU': logger.info('Using Novel IoU')
+        if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
 
     def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
         """IoU loss."""
