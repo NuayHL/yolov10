@@ -287,6 +287,9 @@ class DetectionModel(BaseModel):
         super().__init__()
         self.yaml = cfg if isinstance(cfg, dict) else yaml_model_load(cfg)  # cfg dict
 
+        # extra added
+        self.which_iou = self.yaml.get('iou_loss', 'CIoU')
+
         # Define model
         ch = self.yaml["ch"] = self.yaml.get("ch", ch)  # input channels
         if nc and nc != self.yaml["nc"]:
@@ -358,7 +361,7 @@ class DetectionModel(BaseModel):
 
     def init_criterion(self):
         """Initialize the loss criterion for the DetectionModel."""
-        return v8DetectionLoss(self)
+        return v8DetectionLoss(self, which_iou=self.which_iou)
 
 
 class OBBModel(DetectionModel):
