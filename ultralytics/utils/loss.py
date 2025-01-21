@@ -73,8 +73,10 @@ class BboxLoss(nn.Module):
         self.using_giou = True if self.which_iou == 'GIoU' else False
         self.using_ciou = True if self.which_iou == 'CIoU' else False
         self.using_diou = True if self.which_iou == 'DIoU' else False
+        self.using_piou = True if self.which_iou == 'PIoU' else False
         self.using_interpiou = True if self.which_iou == 'InterpIoU' else False
         if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
+        else: print(f'Using {self.which_iou}')
 
     def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
         """IoU loss."""
@@ -83,6 +85,7 @@ class BboxLoss(nn.Module):
                        GIoU=self.using_giou,
                        DIoU=self.using_diou,
                        CIoU=self.using_ciou,
+                       PIoU=self.using_piou,
                        InterpIoU=self.using_interpiou,)
         loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
 
