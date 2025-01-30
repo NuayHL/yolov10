@@ -75,6 +75,7 @@ class BboxLoss(nn.Module):
         self.using_diou = True if self.which_iou == 'DIoU' else False
         self.using_piou = True if self.which_iou == 'PIoU' else False
         self.using_interpiou = True if self.which_iou == 'InterpIoU' else False
+        self.using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
         if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
         else: print(f'Using {self.which_iou}')
 
@@ -86,7 +87,8 @@ class BboxLoss(nn.Module):
                        DIoU=self.using_diou,
                        CIoU=self.using_ciou,
                        PIoU=self.using_piou,
-                       InterpIoU=self.using_interpiou,)
+                       InterpIoU=self.using_interpiou,
+                       InterpIoUv2=self.using_interpiouv2)
         loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
 
         # DFL loss

@@ -75,7 +75,10 @@ def box_iou(box1, box2, eps=1e-7):
     return inter / ((a2 - a1).prod(2) + (b2 - b1).prod(2) - inter + eps)
 
 
-def bbox_iou(box1, box2, xywh=True, GIoU=False, DIoU=False, CIoU=False, PIoU=False, InterpIoU=False, interp_coe=0.98, eps=1e-7):
+def bbox_iou(box1, box2, xywh=True,
+             GIoU=False, DIoU=False, CIoU=False,
+             PIoU=False, InterpIoU=False, InterpIoUv2=False,
+             interp_coe=0.98, eps=1e-7):
     """
     Calculate Intersection over Union (IoU) of box1(1, 4) to box2(n, 4).
 
@@ -129,6 +132,23 @@ def bbox_iou(box1, box2, xywh=True, GIoU=False, DIoU=False, CIoU=False, PIoU=Fal
         union_i = wi * hi + w2 * h2 - inter_i + eps
         iou_i = inter_i / union_i
         return iou + iou_i - 1
+
+    if InterpIoUv2:
+        def _iou_i(coe):
+            bi_x1, bi_y1, bi_x2, bi_y2 = ((1 - coe) * b1_x1 + coe * b2_x1,
+                                          (1 - coe) * b1_y1 + coe * b2_y1,
+                                          (1 - coe) * b1_x2 + coe * b2_x2,
+                                          (1 - coe) * b1_y2 + coe * b2_y2)
+            inter_i = (torch.min(bi_x2, b2_x2) - torch.max(bi_x1, b2_x1)).clamp(0) * \
+                      (torch.min(bi_y2, b2_y2) - torch.max(bi_y1, b2_y1)).clamp(0)
+
+            wi, hi = bi_x2 - bi_x1, bi_y2 - bi_y1 + eps
+            w2, h2 = b2_x2 - b2_x1, b2_y2 - b2_y1 + eps
+
+            union_i = wi * hi + w2 * h2 - inter_i + eps
+            iou_i = inter_i / union_i
+            return iou_i - 1
+        return iou + 0.25 * _iou_i(0.99) + 0.5 * _iou_i(0.98) + 0.25 * 0.5 * _iou_i(0.97)
 
     if PIoU:
         dw1 = torch.abs(b1_x2.minimum(b1_x1) - b2_x2.minimum(b2_x1))
