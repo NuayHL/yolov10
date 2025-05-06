@@ -74,6 +74,7 @@ class BboxLoss(nn.Module):
         self.using_ciou = True if self.which_iou == 'CIoU' else False
         self.using_diou = True if self.which_iou == 'DIoU' else False
         self.using_piou = True if self.which_iou == 'PIoU' else False
+        self.using_siou = True if self.which_iou == 'SIoU' else False
         self.using_interpiou = True if self.which_iou == 'InterpIoU' else False
         self.using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
         if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
@@ -87,6 +88,7 @@ class BboxLoss(nn.Module):
                        DIoU=self.using_diou,
                        CIoU=self.using_ciou,
                        PIoU=self.using_piou,
+                       SIoU=self.using_siou,
                        InterpIoU=self.using_interpiou,
                        InterpIoUv2=self.using_interpiouv2)
         loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
@@ -741,3 +743,7 @@ class v10DetectLoss:
         one2one = preds["one2one"]
         loss_one2one = self.one2one(one2one, batch)
         return loss_one2many[0] + loss_one2one[0], torch.cat((loss_one2many[1], loss_one2one[1]))
+
+class DFLoss:
+    def __init__(self, *args, **kwargs):
+        super().__init__()
