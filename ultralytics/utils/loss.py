@@ -168,7 +168,7 @@ class KeypointLoss(nn.Module):
 class v8DetectionLoss:
     """Criterion class for computing training losses."""
 
-    def __init__(self, model, tal_topk=10, which_iou='CIoU'):  # model must be de-paralleled
+    def __init__(self, model, tal_topk=10, which_iou='CIoU', alpha=0.98):  # model must be de-paralleled
         """Initializes v8DetectionLoss with the model, defining model-related properties and BCE loss function."""
         device = next(model.parameters()).device  # get model device
         h = model.args  # hyperparameters
@@ -185,7 +185,7 @@ class v8DetectionLoss:
         self.use_dfl = m.reg_max > 1
 
         self.assigner = TaskAlignedAssigner(topk=tal_topk, num_classes=self.nc, alpha=0.5, beta=6.0)
-        self.bbox_loss = BboxLoss(m.reg_max - 1, use_dfl=self.use_dfl, which_iou=which_iou).to(device)
+        self.bbox_loss = BboxLoss(m.reg_max - 1, use_dfl=self.use_dfl, which_iou=which_iou, alpha=alpha).to(device)
         self.proj = torch.arange(m.reg_max, dtype=torch.float, device=device)
 
     def preprocess(self, targets, batch_size, scale_tensor):
