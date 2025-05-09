@@ -289,6 +289,7 @@ class DetectionModel(BaseModel):
 
         # extra added
         self.which_iou = self.yaml.get('iou_loss', 'CIoU')
+        self.alpha = self.yaml.get('alpha', 0.98)
 
         # Define model
         ch = self.yaml["ch"] = self.yaml.get("ch", ch)  # input channels
@@ -361,7 +362,7 @@ class DetectionModel(BaseModel):
 
     def init_criterion(self):
         """Initialize the loss criterion for the DetectionModel."""
-        return v8DetectionLoss(self, which_iou=self.which_iou)
+        return v8DetectionLoss(self, which_iou=self.which_iou, alpha=self.alpha)
 
 
 class OBBModel(DetectionModel):

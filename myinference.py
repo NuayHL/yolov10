@@ -76,10 +76,18 @@ if __name__ == "__main__":
     #     using_type="val",
     #     output_dir="comparison_no_label"
     # )
+    # process_images(
+    #     model_pt="runs/detect2/PIoU-VisDrone-v8m-2/weights/best.pt",
+    #     model_suffix="_piou",
+    #     dataset_cfg="ultralytics/cfg/datasets/VisDrone.yaml",
+    #     using_type="val",
+    #     output_dir="comparison_no_label"
+    # )
     process_images(
-        model_pt="runs/detect2/PIoU-VisDrone-v8m-2/weights/best.pt",
+        model_pt="runs/detect/iou_4/weights/best.pt",
         model_suffix="_piou",
         dataset_cfg="ultralytics/cfg/datasets/VisDrone.yaml",
         using_type="val",
         output_dir="comparison_no_label"
     )
+

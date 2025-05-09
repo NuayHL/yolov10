@@ -64,7 +64,7 @@ class FocalLoss(nn.Module):
 class BboxLoss(nn.Module):
     """Criterion class for computing training losses during training."""
 
-    def __init__(self, reg_max, use_dfl=False, which_iou=None):
+    def __init__(self, reg_max, use_dfl=False, which_iou=None, alpha=0.98):
         """Initialize the BboxLoss module with regularization maximum and DFL settings."""
         super().__init__()
         self.reg_max = reg_max
@@ -79,6 +79,8 @@ class BboxLoss(nn.Module):
         self.using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
         if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
         else: print(f'Using {self.which_iou}')
+        self.alpha = alpha
+        print(f'Alpha: {self.alpha}')
 
     def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
         """IoU loss."""
@@ -90,7 +92,8 @@ class BboxLoss(nn.Module):
                        PIoU=self.using_piou,
                        SIoU=self.using_siou,
                        InterpIoU=self.using_interpiou,
-                       InterpIoUv2=self.using_interpiouv2)
+                       InterpIoUv2=self.using_interpiouv2,
+                       interp_coe=self.alpha)
         loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
 
         # DFL loss
