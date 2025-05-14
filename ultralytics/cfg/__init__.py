@@ -552,19 +552,23 @@ def entrypoint(debug=""):
         from ultralytics import SAM
 
         model = SAM(model)
-    elif re.search("v3|v5|v6|v8|v9", stem):
+    else:
         from ultralytics import YOLO
 
         model = YOLO(model, task=task)
-    else:
-        from ultralytics import YOLOv10
-
-        # Special case for the HuggingFace Hub
-        split_path = model.split('/')
-        if len(split_path) == 2 and (not os.path.exists(model)):
-            model = YOLOv10.from_pretrained(model)
-        else:
-            model = YOLOv10(model)
+    # elif re.search("v3|v5|v6|v8|v9", stem):
+    #     from ultralytics import YOLO
+    #
+    #     model = YOLO(model, task=task)
+    # else:
+    #     from ultralytics import YOLOv10
+    #
+    #     # Special case for the HuggingFace Hub
+    #     split_path = model.split('/')
+    #     if len(split_path) == 2 and (not os.path.exists(model)):
+    #         model = YOLOv10.from_pretrained(model)
+    #     else:
+    #         model = YOLOv10(model)
     if isinstance(overrides.get("pretrained"), str):
         model.load(overrides["pretrained"])
 
