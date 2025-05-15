@@ -77,7 +77,8 @@ def box_iou(box1, box2, eps=1e-7):
 
 def bbox_iou(box1, box2, xywh=True,
              GIoU=False, DIoU=False, CIoU=False,
-             PIoU=False, SIoU=False, InterpIoU=False, InterpIoUv2=False,
+             PIoU=False, SIoU=False, WIoU=False,
+             EIoU=False, InterpIoU=False, InterpIoUv2=False,
              interp_coe=0.98, eps=1e-7):
     """
     Calculate Intersection over Union (IoU) of box1(1, 4) to box2(n, 4).
@@ -149,6 +150,26 @@ def bbox_iou(box1, box2, xywh=True,
             iou_i = inter_i / union_i
             return iou_i - 1
         return iou + 0.25 * _iou_i(0.99) + 0.5 * _iou_i(0.98) + 0.25 * 0.5 * _iou_i(0.97)
+
+    if WIoU or EIoU:
+        center1 = (box1[..., :2] + box1[..., 2:4]) / 2
+        center2 = (box2[..., :2] + box2[..., 2:4]) / 2
+        d_center = center1 - center2
+        l2_center = torch.square(d_center).sum(dim=-1)
+
+        max_coord = torch.maximum(box1[..., :4], box2[..., :4])
+        min_coord = torch.minimum(box1[..., :4], box2[..., :4])
+        wh_box = max_coord[..., 2:4] - min_coord[..., :2]
+        l2_box = torch.square(wh_box).sum(dim=-1)
+
+        if WIoU:
+            rwiou = torch.exp(l2_center / l2_box.detach()).unsqueeze(dim=-1)
+            iloss = 1 - iou
+            loss = iloss * rwiou
+            return 1 - loss
+        if EIoU:
+            penalty = l2_center / l2_box + torch.square(d_center / wh_box).sum(dim=-1)
+            return iou - penalty
 
     if SIoU:
         cw = torch.max(b1_x2, b2_x2) - torch.min(b1_x1, b2_x1)  # convex width
