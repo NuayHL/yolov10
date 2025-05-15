@@ -9,27 +9,6 @@ from .ops import xywhr2xyxyxyxy
 
 TORCH_1_10 = check_version(torch.__version__, "1.10.0")
 
-def make_bbox_iou_func(which_iou, interp_coe):
-    using_giou = which_iou == 'GIoU'
-    using_ciou = which_iou == 'CIoU'
-    using_diou = which_iou == 'DIoU'
-    using_piou = which_iou == 'PIoU'
-    using_siou = which_iou == 'SIoU'
-    using_interpiou = which_iou == 'InterpIoU'
-    using_interpiouv2 = which_iou == 'InterpIoUv2'
-
-    def _bbox_iou(gt_bboxes, pd_bboxes):
-        return bbox_iou(gt_bboxes, pd_bboxes, xywh=False,
-                        GIoU=using_giou,
-                        DIoU=using_diou,
-                        CIoU=using_ciou,
-                        PIoU=using_piou,
-                        SIoU=using_siou,
-                        InterpIoU=using_interpiou,
-                        InterpIoUv2=using_interpiouv2,
-                        interp_coe=interp_coe)
-    return _bbox_iou
-
 class TaskAlignedAssigner(nn.Module):
     """
     A task-aligned assigner for object detection.
@@ -58,7 +37,26 @@ class TaskAlignedAssigner(nn.Module):
         self.iou_args = iou_args
 
         print(f"TAL using {self.which_iou}")
-        self.bbox_iou = make_bbox_iou_func(self.which_iou, self.iou_args)
+
+    def bbox_iou(self, gt_bboxes, pd_bboxes):
+        using_giou = self.which_iou == 'GIoU'
+        using_ciou = self.which_iou == 'CIoU'
+        using_diou = self.which_iou == 'DIoU'
+        using_piou = self.which_iou == 'PIoU'
+        using_siou = self.which_iou == 'SIoU'
+        using_interpiou = self.which_iou == 'InterpIoU'
+        using_interpiouv2 = self.which_iou == 'InterpIoUv2'
+
+        return bbox_iou(pd_bboxes, gt_bboxes, xywh=False,
+                        GIoU=using_giou,
+                        DIoU=using_diou,
+                        CIoU=using_ciou,
+                        PIoU=using_piou,
+                        SIoU=using_siou,
+                        InterpIoU=using_interpiou,
+                        InterpIoUv2=using_interpiouv2,
+                        interp_coe=self.iou_args)
+
 
     @torch.no_grad()
     def forward(self, pd_scores, pd_bboxes, anc_points, gt_labels, gt_bboxes, mask_gt):
