@@ -123,8 +123,6 @@ def bbox_iou(box1, box2, xywh=True,
     # IoU
     iou = inter / union
     if InterpIoU or IoUGuideInterpIoU or ExpIoUGuideInterpIoU or ExpInterpIoU:
-        print('here')
-        print(InterpIoU, IoUGuideInterpIoU, ExpInterpIoU, ExpIoUGuideInterpIoU)
         if IoUGuideInterpIoU:
             interp_coe = 0.99 * (1 - iou)
         if ExpIoUGuideInterpIoU:

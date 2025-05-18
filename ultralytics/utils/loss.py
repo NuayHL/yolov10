@@ -80,7 +80,7 @@ class BboxLoss(nn.Module):
         self.using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
         self.using_iouguideinterpiou = True if self.which_iou == 'IoUGuideInterpIoU' else False
         self.using_expiouguideinterpiou = True if self.which_iou == 'ExpIoUGuideInterpIoU' else False
-        self.using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False,
+        self.using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False
 
         if self.which_iou in ['InterpIoU', 'InterpIoUv2', 'IoUGuideInterpIoU', 'ExpIoUGuideInterpIoU', 'ExpInterpIoU']:
             print(f'Using Novel IoU: {self.which_iou}')
