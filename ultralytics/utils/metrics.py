@@ -125,8 +125,8 @@ def bbox_iou(box1, box2, xywh=True,
     if InterpIoU or IoUGuideInterpIoU or ExpIoUGuideInterpIoU or ExpInterpIoU:
         if IoUGuideInterpIoU:
             interp_coe = 0.99 * (1 - iou)
-        # if ExpIoUGuideInterpIoU:
-        #     interp_coe = 0.99 * (1 - torch.exp(-interp_coe * (1 - iou)))
+        if ExpIoUGuideInterpIoU:
+            interp_coe = 0.99 * (1 - torch.exp(-interp_coe * (1 - iou)))
         if ExpInterpIoU:
             bi_x1 = torch.exp((1 - interp_coe) * torch.log(b1_x1 + eps) + interp_coe * torch.log(b2_x1 + eps))
             bi_y1 = torch.exp((1 - interp_coe) * torch.log(b1_y1 + eps) + interp_coe * torch.log(b2_y1 + eps))
