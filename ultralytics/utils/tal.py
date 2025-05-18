@@ -44,8 +44,12 @@ class TaskAlignedAssigner(nn.Module):
         using_diou = self.which_iou == 'DIoU'
         using_piou = self.which_iou == 'PIoU'
         using_siou = self.which_iou == 'SIoU'
-        using_interpiou = self.which_iou == 'InterpIoU'
-        using_interpiouv2 = self.which_iou == 'InterpIoUv2'
+
+        using_interpiou = True if self.which_iou == 'InterpIoU' else False
+        using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
+        using_iouguideinterpiou = True if self.which_iou == 'IoUGuideInterpIoU' else False
+        using_expiouguideinterpiou = True if self.which_iou == 'ExpIoUGuideInterpIoU' else False
+        using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False,
 
         return bbox_iou(pd_bboxes, gt_bboxes, xywh=False,
                         GIoU=using_giou,
@@ -55,8 +59,10 @@ class TaskAlignedAssigner(nn.Module):
                         SIoU=using_siou,
                         InterpIoU=using_interpiou,
                         InterpIoUv2=using_interpiouv2,
+                        IoUGuideInterpIoU=using_iouguideinterpiou,
+                        ExpIoUGuideInterpIoU=using_expiouguideinterpiou,
+                        ExpInterpIoU=using_expinterpiou,
                         interp_coe=self.iou_args)
-
 
     @torch.no_grad()
     def forward(self, pd_scores, pd_bboxes, anc_points, gt_labels, gt_bboxes, mask_gt):

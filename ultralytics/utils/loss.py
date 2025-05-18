@@ -75,10 +75,19 @@ class BboxLoss(nn.Module):
         self.using_diou = True if self.which_iou == 'DIoU' else False
         self.using_piou = True if self.which_iou == 'PIoU' else False
         self.using_siou = True if self.which_iou == 'SIoU' else False
+
         self.using_interpiou = True if self.which_iou == 'InterpIoU' else False
         self.using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
-        if self.which_iou == 'InterpIoU': print('Using Novel IoU!!!')
-        else: print(f'Using {self.which_iou}')
+        self.using_iouguideinterpiou = True if self.which_iou == 'IoUGuideInterpIoU' else False
+        self.using_expiouguideinterpiou = True if self.which_iou == 'ExpIoUGuideInterpIoU' else False
+        self.using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False,
+
+        if self.which_iou in ['InterpIoU', 'InterpIoUv2', 'IoUGuideInterpIoU', 'ExpIoUGuideInterpIoU', 'ExpInterpIoU']:
+            print(f'Using Novel IoU: {self.which_iou}')
+        elif self.which_iou in ['CIoU','GIoU','DIoU','PIoU','SIoU']:
+            print(f'Using {self.which_iou}')
+        else:
+            raise Exception(f'No IoU named {self.which_iou}')
         self.alpha = alpha
         print(f'Alpha: {self.alpha}')
 
@@ -93,6 +102,9 @@ class BboxLoss(nn.Module):
                        SIoU=self.using_siou,
                        InterpIoU=self.using_interpiou,
                        InterpIoUv2=self.using_interpiouv2,
+                       IoUGuideInterpIoU=self.using_iouguideinterpiou,
+                       ExpIoUGuideInterpIoU=self.using_expiouguideinterpiou,
+                       ExpInterpIoU=self.using_expinterpiou,
                        interp_coe=self.alpha)
         loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
 
