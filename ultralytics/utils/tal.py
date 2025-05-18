@@ -49,7 +49,7 @@ class TaskAlignedAssigner(nn.Module):
         using_interpiouv2 = True if self.which_iou == 'InterpIoUv2' else False
         using_iouguideinterpiou = True if self.which_iou == 'IoUGuideInterpIoU' else False
         using_expiouguideinterpiou = True if self.which_iou == 'ExpIoUGuideInterpIoU' else False
-        using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False,
+        using_expinterpiou = True if self.which_iou == 'ExpInterpIoU' else False
 
         return bbox_iou(pd_bboxes, gt_bboxes, xywh=False,
                         GIoU=using_giou,
