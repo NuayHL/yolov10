@@ -40,17 +40,18 @@ class TaskAlignedAssigner(nn.Module):
                             IoUGuideInterpIoU=False,
                             ExpIoUGuideInterpIoU=False,
                             ExpInterpIoU=False,)
-
-    def bbox_iou(self, gt_bboxes, pd_bboxes):
         if self.which_iou in ['InterpIoU', 'IoUGuideInterpIoU', 'ExpIoUGuideInterpIoU']:
             self.use_iou['InterpIoU'] = True
             print(f"TAL using InterpIoU")
+            if self.which_iou == 'ExpIoUGuideInterpIoU':
+                self.iou_args = 0.98
         else:
             for k in self.use_iou.keys():
                 if self.which_iou == k:
                     self.use_iou[k] = True
                     print(f"TAL using {k}")
 
+    def bbox_iou(self, gt_bboxes, pd_bboxes):
         return bbox_iou(pd_bboxes, gt_bboxes, xywh=False,
                         **self.use_iou,
                         interp_coe=self.iou_args)
