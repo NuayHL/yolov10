@@ -86,6 +86,8 @@ class BboxLoss(nn.Module):
             print(f'Using Novel IoU: {self.which_iou}')
         elif self.which_iou in ['CIoU','GIoU','DIoU','PIoU','SIoU']:
             print(f'Using {self.which_iou}')
+        elif self.which_iou == "IoU":
+            print(f'Using Base IoU')
         else:
             raise Exception(f'No IoU named {self.which_iou}')
         self.alpha = alpha
