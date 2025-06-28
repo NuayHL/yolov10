@@ -124,19 +124,28 @@ def bbox_iou(box1, box2, xywh=True,
     iou = inter / union
     if InterpIoU or IoUGuideInterpIoU or ExpIoUGuideInterpIoU or ExpInterpIoU:
         if IoUGuideInterpIoU:
-            interp_coe = 0.99 * (1 - iou)
+            interp_coe = 0.9999 * (1 - iou.detach())
         if ExpIoUGuideInterpIoU:
-            interp_coe = 0.99 * (1 - torch.exp(-interp_coe * (1 - iou)))
+            lv, hv = interp_coe[0], interp_coe[1]
+            interp_coe = torch.clamp((1 - iou.detach()), min=lv, max=hv)
         if ExpInterpIoU:
-            bi_x1 = torch.exp((1 - interp_coe) * torch.log(b1_x1 + eps) + interp_coe * torch.log(b2_x1 + eps))
-            bi_y1 = torch.exp((1 - interp_coe) * torch.log(b1_y1 + eps) + interp_coe * torch.log(b2_y1 + eps))
-            bi_x2 = torch.exp((1 - interp_coe) * torch.log(b1_x2 + eps) + interp_coe * torch.log(b2_x2 + eps))
-            bi_y2 = torch.exp((1 - interp_coe) * torch.log(b1_y2 + eps) + interp_coe * torch.log(b2_y2 + eps))
-        else:
-            bi_x1, bi_y1, bi_x2, bi_y2 = ((1 - interp_coe) * b1_x1 + interp_coe * b2_x1,
-                                          (1 - interp_coe) * b1_y1 + interp_coe * b2_y1,
-                                          (1 - interp_coe) * b1_x2 + interp_coe * b2_x2,
-                                          (1 - interp_coe) * b1_y2 + interp_coe * b2_y2)
+            interp_coe = 0.5 + 0.4999 * torch.sigmoid((1 - iou.detach()))
+        # if ExpIoUGuideInterpIoU:
+        #     interp_coe = 0.99 * (1 - torch.exp(-interp_coe * (1 - iou)))
+        # if ExpInterpIoU:
+        #     bi_x1 = torch.exp((1 - interp_coe) * torch.log(b1_x1 + eps) + interp_coe * torch.log(b2_x1 + eps))
+        #     bi_y1 = torch.exp((1 - interp_coe) * torch.log(b1_y1 + eps) + interp_coe * torch.log(b2_y1 + eps))
+        #     bi_x2 = torch.exp((1 - interp_coe) * torch.log(b1_x2 + eps) + interp_coe * torch.log(b2_x2 + eps))
+        #     bi_y2 = torch.exp((1 - interp_coe) * torch.log(b1_y2 + eps) + interp_coe * torch.log(b2_y2 + eps))
+        # else:
+        #     bi_x1, bi_y1, bi_x2, bi_y2 = ((1 - interp_coe) * b1_x1 + interp_coe * b2_x1,
+        #                                   (1 - interp_coe) * b1_y1 + interp_coe * b2_y1,
+        #                                   (1 - interp_coe) * b1_x2 + interp_coe * b2_x2,
+        #                                   (1 - interp_coe) * b1_y2 + interp_coe * b2_y2)
+        bi_x1, bi_y1, bi_x2, bi_y2 = ((1 - interp_coe) * b1_x1 + interp_coe * b2_x1,
+                                      (1 - interp_coe) * b1_y1 + interp_coe * b2_y1,
+                                      (1 - interp_coe) * b1_x2 + interp_coe * b2_x2,
+                                      (1 - interp_coe) * b1_y2 + interp_coe * b2_y2)
         inter_i = (torch.min(bi_x2, b2_x2) - torch.max(bi_x1, b2_x1)).clamp(0) * \
                   (torch.min(bi_y2, b2_y2) - torch.max(bi_y1, b2_y1)).clamp(0)
 

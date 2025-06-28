@@ -46,4 +46,4 @@ head:
   - [[15, 18, 21], 1, Detect, [nc]] # Detect(P3, P4, P5)
 
 iou_loss: ExpIoUGuideInterpIoU
-alpha: [0.5, 0.99]
+alpha: [0.6, 0.99]
