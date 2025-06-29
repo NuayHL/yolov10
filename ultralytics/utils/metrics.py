@@ -129,7 +129,7 @@ def bbox_iou(box1, box2, xywh=True,
             lv, hv = interp_coe[0], interp_coe[1]
             interp_coe = torch.clamp((1 - iou.detach()), min=lv, max=hv)
         if ExpInterpIoU:
-            interp_coe = 0.5 + 0.4999 * torch.sigmoid((1 - iou.detach()))
+            interp_coe = 0.90 + 0.09 * iou.detach()
         # if ExpIoUGuideInterpIoU:
         #     interp_coe = 0.99 * (1 - torch.exp(-interp_coe * (1 - iou)))
         # if ExpInterpIoU:
