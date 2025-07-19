@@ -1,10 +1,9 @@
 from ultralytics import YOLO
 #
-model = YOLO('runs/detect/detach_ablation/voc3/weights/best.pt')
+model = YOLO('runs/detect/vis_re/vis_60_99/weights/best.pt')
 
 # metrics = model.val(data="ultralytics/cfg/datasets/VisDrone.yaml", imgsz=640, batch=8, save_json=True)
-metrics = model.val(data="ultralytics/cfg/datasets/VOC.yaml", name='val/test', batch=8, imgsz=640)
+metrics = model.val(data="ultralytics/cfg/datasets/VisDrone.yaml", name='val/test', batch=8, imgsz=640)
 print(metrics.box.map50)  # mAP50
 print(metrics.box.map75)  # mAP75
 print(metrics.box.map)  # mAP50-95
-

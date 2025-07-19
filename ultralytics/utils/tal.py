@@ -40,11 +40,12 @@ class TaskAlignedAssigner(nn.Module):
                             IoUGuideInterpIoU=False,
                             ExpIoUGuideInterpIoU=False,
                             ExpInterpIoU=False,)
-        if self.which_iou in ['InterpIoU', 'IoUGuideInterpIoU', 'ExpIoUGuideInterpIoU']:
+        if self.which_iou in ['InterpIoU']:
             self.use_iou['InterpIoU'] = True
             print(f"TAL using InterpIoU")
             if self.which_iou == 'ExpIoUGuideInterpIoU':
                 self.iou_args = 0.98
+
         else:
             self.use_iou['CIoU'] = True
             # for k in self.use_iou.keys():

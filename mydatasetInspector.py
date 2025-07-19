@@ -8,7 +8,7 @@ from ultralytics import YOLO
 
 dataset_cfg = 'ultralytics/cfg/datasets/VisDrone.yaml'
 using_type = 'val'
-output_dir = 'comparison_no_label'
+output_dir = 'comparison_no_label_new'
 
 os.makedirs(output_dir, exist_ok=True)
 
