@@ -454,6 +454,9 @@ def entrypoint(debug=""):
     It uses the package's default cfg and initializes it using the passed overrides.
     Then it calls the CLI function with the composed cfg
     """
+    # claim by me
+    print('Using Haoyuan\'s yolov10 framework')
+
     args = (debug.split(" ") if debug else sys.argv)[1:]
     if not args:  # no arguments passed
         LOGGER.info(CLI_HELP_MSG)
